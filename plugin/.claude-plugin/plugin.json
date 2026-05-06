@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "claude-pending-board",
-  "version": "0.2.8",
+  "version": "0.3.0",
   "description": "Surface every pending Claude Code session across all projects in a single floating HUD window.",
   "author": {
     "name": "sadwx",

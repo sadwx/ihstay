@@ -14,7 +14,18 @@ case "$(uname -s 2>/dev/null)" in
     *) exit 0 ;;
 esac
 
-BOARD_DIR="$HOME/.claude/pending"
+# When running inside WSL with USERPROFILE crossed in via WSLENV
+# (`USERPROFILE/up` token, auto-configured by the Windows tray app on first
+# launch), write to the Windows-side board so a single tray app can surface
+# entries from every WSL distro on the host without per-distro symlinks.
+# Falls back to $HOME for macOS, for older tray-app builds that don't ship
+# the USERPROFILE/up token, and for users who set up a manual symlink at
+# $HOME/.claude/pending → /mnt/c/.../.claude/pending.
+if [ -n "${WSL_DISTRO_NAME:-}" ] && [ -n "${USERPROFILE:-}" ] && [ -d "$USERPROFILE" ]; then
+    BOARD_DIR="$USERPROFILE/.claude/pending"
+else
+    BOARD_DIR="$HOME/.claude/pending"
+fi
 BOARD_FILE="$BOARD_DIR/board.jsonl"
 LOG_DIR="$BOARD_DIR/logs"
 LOG_FILE="$LOG_DIR/hook-errors.log"
