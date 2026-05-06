@@ -108,7 +108,7 @@ fn main() {
                 let warning_state = shared_state.clone();
                 let app_handle = app.handle().clone();
                 tauri::async_runtime::spawn_blocking(move || {
-                    let status = wsl_env_setup::ensure_wezterm_pane_in_wslenv();
+                    let status = wsl_env_setup::ensure_wsl_env_tokens();
                     if status != wsl_env_setup::Status::Updated {
                         return;
                     }

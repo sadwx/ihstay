@@ -55,22 +55,36 @@ Any of the three paths produces the same result: three hooks (`Notification`, `U
 
 ### Step 2.5 · WSL (Windows users running Claude Code inside WSL)
 
-If you launch Claude Code inside WSL via WezTerm, install the plugin **from inside WSL**, not from a native Windows shell. The Linux hook script is what fires there. Open a WSL tab and run:
+If you launch Claude Code inside WSL via WezTerm, install the plugin **from inside each WSL distro** you use, not from a native Windows shell. The Linux hook script is what fires there. Open a WSL tab and run:
 
 ```bash
 claude plugin marketplace add sadwx/claude-pending-board
 claude plugin install claude-pending-board@claude-pending-board
 ```
 
-That's it. The tray app detects WSL on launch and idempotently appends `WEZTERM_PANE/u` to your user `WSLENV`, so the env var crosses the Windows→WSL boundary and click-to-focus can address the right tab. After the first launch, **open a fresh WezTerm tab** (or restart WezTerm) so it picks up the new `WSLENV`. Verify with `echo $WEZTERM_PANE` inside WSL — it should print a number.
+Repeat for every distro that runs Claude Code (Ubuntu, Debian, custom distros — each one needs its own `claude plugin install`).
+
+That's it. The tray app detects WSL on launch and idempotently appends `WEZTERM_PANE/u` and `USERPROFILE/up` to your user `WSLENV`, so:
+
+- `WEZTERM_PANE` crosses the Windows→WSL boundary and click-to-focus can address the right tab.
+- `USERPROFILE` is path-translated (so `C:\Users\<you>` becomes `/mnt/c/Users/<you>` inside WSL), letting the bash hook write entries directly to the Windows-side `~/.claude/pending/board.jsonl` that the tray app watches. **Multi-distro setups don't need any per-distro symlink** — every distro's hook lands in the same Windows file, distinguished by a `wsl_distro` tag on each entry.
+
+After the first launch, **open a fresh WezTerm tab** (or restart WezTerm) so it picks up the new `WSLENV`. Verify with:
+
+```bash
+echo $WEZTERM_PANE     # should print a number
+echo $USERPROFILE      # should print /mnt/c/Users/<your-windows-user>
+```
 
 If you'd rather wire it up by hand, run this once from a Windows PowerShell tab and skip the auto-setup:
 
 ```powershell
-[Environment]::SetEnvironmentVariable('WSLENV', "$env:WSLENV;WEZTERM_PANE/u", 'User')
+[Environment]::SetEnvironmentVariable('WSLENV', "$env:WSLENV;WEZTERM_PANE/u:USERPROFILE/up", 'User')
 ```
 
-Without `WEZTERM_PANE` available inside WSL, entries still appear in the HUD and clicking still resumes the session — it just opens a fresh tab instead of focusing the existing one.
+If `$USERPROFILE` is not visible inside WSL (e.g. the auto-setup hasn't run yet, or you opened a tab before WezTerm restarted), the hook falls back to writing to the Linux-side `$HOME/.claude/pending/board.jsonl` — which the Windows tray app won't see. To avoid the fall-through, finish the WSLENV setup or drop in a manual symlink: `ln -s /mnt/c/Users/<you>/.claude/pending ~/.claude/pending`.
+
+If `$WEZTERM_PANE` is unset inside WSL, entries still appear in the HUD (assuming the path-translation above is working) — clicking just opens a fresh tab via `wsl.exe -d <distro> -- bash -lc 'claude --resume <id>'` instead of focusing the existing one.
 
 The Windows tray app is what runs and renders the HUD; only the hook scripts live in WSL.
 

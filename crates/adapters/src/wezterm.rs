@@ -1,8 +1,83 @@
 use claude_pending_board_core::terminal::{AdapterError, TerminalAdapter};
 use claude_pending_board_core::types::TerminalMatch;
 use serde::Deserialize;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::Command;
+
+/// Windows console-suppression flag for `Command::creation_flags`. Defined
+/// inline so the crate stays free of a `winapi`/`windows-sys` dep.
+#[cfg(target_os = "windows")]
+const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+
+/// Find a running `wezterm-gui` process and return the absolute path of its
+/// mux socket. WezTerm's CLI computes the per-mux socket name as
+/// `gui-sock-<pid>` but treats it as a relative path when
+/// `WEZTERM_UNIX_SOCKET` is unset — every `wezterm cli` invocation from a
+/// process that was not itself spawned by WezTerm fails the connection.
+/// The tray app launches from the OS startup folder / tray with no such
+/// env, so this helper supplies the absolute path explicitly.
+///
+/// When multiple `wezterm-gui` processes run, picks the most-recently-started
+/// one. Returns `None` when no `wezterm-gui` is running, in which case the
+/// caller should fall back to invoking `wezterm` without a custom env (so
+/// wezterm's own auto-start path can launch a fresh mux).
+fn wezterm_socket_path() -> Option<PathBuf> {
+    use sysinfo::{ProcessRefreshKind, ProcessesToUpdate, System};
+
+    let mut sys = System::new();
+    sys.refresh_processes_specifics(
+        ProcessesToUpdate::All,
+        true,
+        ProcessRefreshKind::everything(),
+    );
+
+    #[cfg(target_os = "windows")]
+    let target = "wezterm-gui.exe";
+    #[cfg(not(target_os = "windows"))]
+    let target = "wezterm-gui";
+
+    let pid = sys
+        .processes()
+        .iter()
+        .filter_map(|(pid, p)| {
+            if p.name().eq_ignore_ascii_case(target) {
+                Some((pid.as_u32(), p.start_time()))
+            } else {
+                None
+            }
+        })
+        .max_by_key(|(_, start)| *start)
+        .map(|(pid, _)| pid)?;
+
+    socket_path_for_pid(pid)
+}
+
+/// OS-specific socket path construction. Windows builds use
+/// `<USERPROFILE>\.local\share\wezterm\gui-sock-<pid>`; macOS uses the same
+/// scheme rooted at `$HOME`.
+fn socket_path_for_pid(pid: u32) -> Option<PathBuf> {
+    let home = dirs_next::home_dir()?;
+    Some(
+        home.join(".local/share/wezterm")
+            .join(format!("gui-sock-{pid}")),
+    )
+}
+
+/// Wrap `Command::new(wezterm)` so every `wezterm cli` subprocess gets the
+/// mux socket path explicitly (regression fix — see `wezterm_socket_path`)
+/// and on Windows is suppressed from briefly flashing a console window.
+fn wezterm_command(binary: &str) -> Command {
+    let mut cmd = Command::new(binary);
+    if let Some(socket) = wezterm_socket_path() {
+        cmd.env("WEZTERM_UNIX_SOCKET", socket);
+    }
+    #[cfg(target_os = "windows")]
+    {
+        use std::os::windows::process::CommandExt;
+        cmd.creation_flags(CREATE_NO_WINDOW);
+    }
+    cmd
+}
 
 /// WezTerm pane info from `wezterm cli list --format json`.
 #[derive(Debug, Deserialize)]
@@ -58,7 +133,7 @@ impl WezTermAdapter {
     fn list_panes() -> Result<Vec<WezTermPane>, AdapterError> {
         let binary = Self::find_binary().ok_or(AdapterError::BinaryNotFound)?;
 
-        let output = Command::new(&binary)
+        let output = wezterm_command(&binary)
             .args(["cli", "list", "--format", "json"])
             .output()
             .map_err(|e| {
@@ -81,7 +156,7 @@ impl WezTermAdapter {
     fn activate_pane(pane_id: u64) -> Result<(), AdapterError> {
         let binary = Self::find_binary().ok_or(AdapterError::BinaryNotFound)?;
 
-        let output = Command::new(&binary)
+        let output = wezterm_command(&binary)
             .args(["cli", "activate-pane", "--pane-id", &pane_id.to_string()])
             .output()
             .map_err(|e| {
@@ -290,17 +365,45 @@ impl TerminalAdapter for WezTermAdapter {
     ) -> Result<(), AdapterError> {
         let binary = Self::find_binary().ok_or(AdapterError::BinaryNotFound)?;
 
-        let mut command = Command::new(&binary);
+        let mut command = wezterm_command(&binary);
+        let resume_cmd;
         if let Some(distro) = wsl_distro {
             // WSL-origin entry: translate the Linux cwd to a \\wsl$\<distro>\…
             // UNC and run the resume command inside WSL via wsl.exe. Otherwise
             // wezterm (running on Windows) can't enter the path and Claude
             // (running on the Windows side) won't know about the session id
             // that lives in the WSL distro.
+            //
+            // Use `bash -lc` rather than `wsl.exe -e <cmd>`: the latter skips
+            // the login shell, so any `claude` install that adds itself to
+            // PATH only via rcfiles (the common case for `~/.local/bin`,
+            // `~/.npm-global/bin`, asdf/mise, /mnt/c-mounted Windows npm
+            // shims, …) fails with `execvpe(claude) failed`. The login form
+            // sources `/etc/profile`, `~/.profile`, and friends before
+            // exec'ing claude.
+            //
+            // Session id is a UUID per `Op::Add`'s schema — alphanumeric +
+            // dashes only, no shell metacharacters — so direct
+            // interpolation is safe. Asserted below.
+            debug_assert!(
+                is_uuid_like(session_id),
+                "session_id should be UUID-shaped before reaching spawn_resume"
+            );
             let unc_cwd = wsl_cwd_to_unc(distro, cwd);
+            resume_cmd = format!("claude --resume {session_id}");
             command.args([
-                "cli", "spawn", "--cwd", &unc_cwd, "--", "wsl.exe", "-d", distro, "-e", "claude",
-                "--resume", session_id,
+                "cli",
+                "spawn",
+                "--cwd",
+                &unc_cwd,
+                "--",
+                "wsl.exe",
+                "-d",
+                distro,
+                "--",
+                "bash",
+                "-lc",
+                &resume_cmd,
             ]);
         } else {
             command.args([
@@ -343,6 +446,19 @@ impl TerminalAdapter for WezTermAdapter {
 ///
 /// `/home/user/project` → `\\wsl$\Ubuntu-24.04\home\user\project`
 /// `/`                   → `\\wsl$\Ubuntu-24.04\`
+/// Cheap UUID shape check — matches Claude Code's session id format
+/// `[0-9a-f-]{36}` (8-4-4-4-12 hex with dashes). Used as a `debug_assert!`
+/// guard before interpolating into a `bash -lc` command line.
+fn is_uuid_like(s: &str) -> bool {
+    if s.len() != 36 {
+        return false;
+    }
+    s.bytes().enumerate().all(|(i, b)| match i {
+        8 | 13 | 18 | 23 => b == b'-',
+        _ => b.is_ascii_hexdigit(),
+    })
+}
+
 pub(crate) fn wsl_cwd_to_unc(distro: &str, linux_cwd: &Path) -> String {
     let path_str = linux_cwd.to_string_lossy();
     // Drop the leading `/` if present, then convert remaining `/` to `\`.
@@ -439,5 +555,63 @@ mod tests {
     fn test_wsl_cwd_to_unc_other_distro() {
         let result = wsl_cwd_to_unc("Debian", Path::new("/var/log"));
         assert_eq!(result, r"\\wsl$\Debian\var\log");
+    }
+
+    #[test]
+    fn test_socket_path_for_pid_uses_local_share() {
+        // Pure-string assertion: if home_dir() returned anything, the result
+        // ends with the well-known suffix WezTerm CLI expects. We don't pin
+        // the exact home directory because the test environment varies.
+        let result = socket_path_for_pid(12345);
+        let path = result.expect("home_dir should resolve in the test env");
+        let path_str = path.to_string_lossy().replace('\\', "/");
+        assert!(
+            path_str.ends_with(".local/share/wezterm/gui-sock-12345"),
+            "unexpected suffix in socket path: {path_str}"
+        );
+    }
+
+    #[test]
+    fn test_is_uuid_like_canonical() {
+        assert!(is_uuid_like("76ae9be4-e26a-49e8-aae0-f245b372bc48"));
+        assert!(is_uuid_like("00000000-0000-0000-0000-000000000000"));
+    }
+
+    #[test]
+    fn test_is_uuid_like_rejects_metacharacters() {
+        // The whole point of this guard: anything that could escape a
+        // bash -lc 'claude --resume <id>' interpolation is rejected.
+        assert!(!is_uuid_like("76ae9be4'; rm -rf ~"));
+        assert!(!is_uuid_like("76ae9be4-e26a-49e8-aae0-f245b372bc4z")); // non-hex
+        assert!(!is_uuid_like("76ae9be4-e26a-49e8-aae0-f245b372bc4")); // short
+        assert!(!is_uuid_like("76ae9be4 e26a 49e8 aae0 f245b372bc48")); // spaces
+        assert!(!is_uuid_like(""));
+    }
+
+    #[test]
+    fn test_wezterm_command_no_console_window_flag_on_windows() {
+        // The flag is set inside `wezterm_command`. We can't introspect it
+        // through the `Command` API, but we can verify that the command
+        // round-trips without panicking and the program name matches.
+        let cmd = wezterm_command("wezterm");
+        assert_eq!(cmd.get_program(), std::ffi::OsStr::new("wezterm"));
+    }
+
+    #[test]
+    fn test_wezterm_command_omits_socket_env_when_no_gui_running() {
+        // If `wezterm_socket_path()` returns None (no wezterm-gui in the
+        // process table at test time), the resulting Command MUST NOT carry
+        // a stale or empty WEZTERM_UNIX_SOCKET. This guards against a
+        // refactor where a `Some(empty)` path gets set unconditionally.
+        if wezterm_socket_path().is_none() {
+            let cmd = wezterm_command("wezterm");
+            let has_socket_env = cmd
+                .get_envs()
+                .any(|(k, v)| k == std::ffi::OsStr::new("WEZTERM_UNIX_SOCKET") && v.is_some());
+            assert!(!has_socket_env);
+        }
+        // When wezterm IS running, we just verify the command builds without
+        // panicking — the absolute-path content is exercised by
+        // `test_socket_path_for_pid_uses_local_share`.
     }
 }

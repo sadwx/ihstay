@@ -460,9 +460,10 @@ dependencies = [
 
 [[package]]
 name = "claude-pending-board-adapters"
-version = "0.2.7"
+version = "0.3.0"
 dependencies = [
  "claude-pending-board-core",
+ "dirs-next",
  "serde",
  "serde_json",
  "sysinfo",
@@ -474,7 +475,7 @@ dependencies = [
 
 [[package]]
 name = "claude-pending-board-app"
-version = "0.2.7"
+version = "0.3.0"
 dependencies = [
  "chrono",
  "claude-pending-board-adapters",
@@ -499,7 +500,7 @@ dependencies = [
 
 [[package]]
 name = "claude-pending-board-core"
-version = "0.2.7"
+version = "0.3.0"
 dependencies = [
  "chrono",
  "dirs-next",
