@@ -1,14 +1,14 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
-  "name": "claude-pending-board",
+  "name": "ihstay",
   "version": "0.3.0",
-  "description": "Surface every pending Claude Code session across all projects in a single floating HUD window.",
+  "description": "IHSTAY (I Have Something To Ask You) — surface every pending Claude Code session across all projects in a single floating HUD window.",
   "author": {
     "name": "sadwx",
     "url": "https://github.com/sadwx"
   },
-  "homepage": "https://github.com/sadwx/claude-pending-board",
-  "repository": "https://github.com/sadwx/claude-pending-board",
+  "homepage": "https://github.com/sadwx/ihstay",
+  "repository": "https://github.com/sadwx/ihstay",
   "hooks": {
     "Notification": [
       {

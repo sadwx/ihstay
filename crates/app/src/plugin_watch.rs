@@ -1,5 +1,5 @@
 //! Watch `~/.claude/plugins/cache/` for marketplace install / update events
-//! that touch the `claude-pending-board` plugin and re-run the
+//! that touch the `ihstay` plugin and re-run the
 //! `plugin.json` sanitizer when one fires.
 //!
 //! Background: Claude Code 2.1.x ignores the `platform` field on hook
@@ -24,7 +24,7 @@ use std::path::Path;
 use std::sync::Arc;
 use std::time::Duration;
 
-pub const PLUGIN_NAME: &str = "claude-pending-board";
+pub const PLUGIN_NAME: &str = "ihstay";
 
 /// Debounce window. Must be long enough that a full `claude plugin install`
 /// settles within it (creating a version dir tree fires many events) and

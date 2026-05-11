@@ -14,9 +14,9 @@ use std::process::{Command, Stdio};
 // The CLI's `plugin marketplace add` accepts owner/repo, a full URL, or a
 // local path — NOT the `github:owner/repo` short-form the Claude Code
 // slash command accepts. See `claude plugin marketplace add --help`.
-const MARKETPLACE: &str = "sadwx/claude-pending-board";
-const PLUGIN_REF: &str = "claude-pending-board@claude-pending-board";
-const PLUGIN_NAME: &str = "claude-pending-board";
+const MARKETPLACE: &str = "sadwx/ihstay";
+const PLUGIN_REF: &str = "ihstay@ihstay";
+const PLUGIN_NAME: &str = "ihstay";
 
 /// `process.platform`-style identifier for the current OS as used in the
 /// plugin's `plugin.json` `platform` annotations.
