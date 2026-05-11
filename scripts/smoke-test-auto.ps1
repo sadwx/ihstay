@@ -78,7 +78,7 @@ if (-not (Test-Path $AppPath)) {
 }
 
 # Launch app with log capture
-$logFile = Join-Path $env:TEMP "claude-pending-smoke-$(Get-Random).log"
+$logFile = Join-Path $env:TEMP "ihstay-smoke-$(Get-Random).log"
 $appProcess = Start-Process -FilePath $AppPath -PassThru `
     -RedirectStandardOutput $logFile -RedirectStandardError "$logFile.err" `
     -WindowStyle Hidden

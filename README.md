@@ -40,7 +40,7 @@ Claude Code (multiple sessions)
 - **Dismiss with cooldown**: manually dismiss the window with a 5-second confirmation panel; configurable 15-minute cooldown; optional reminder when new items accumulate during the cooldown.
 - **Cross-platform**: one Rust codebase for Windows and macOS. WezTerm adapter on both; iTerm2 adapter on macOS.
 
-See `openspec/changes/add-claude-pending-board/design.md` for the full design rationale.
+See `openspec/changes/archive/add-claude-pending-board/design.md` for the full design rationale.
 
 ## Requirements
 
@@ -68,10 +68,10 @@ See [`INSTALL.md`](./INSTALL.md) for SmartScreen / Gatekeeper notes, verificatio
 ## Documentation
 
 - [`INSTALL.md`](./INSTALL.md) — step-by-step install for end users
-- [`openspec/changes/add-claude-pending-board/proposal.md`](./openspec/changes/add-claude-pending-board/proposal.md) — what and why
-- [`openspec/changes/add-claude-pending-board/design.md`](./openspec/changes/add-claude-pending-board/design.md) — technical design
-- [`openspec/changes/add-claude-pending-board/specs/pending-board/spec.md`](./openspec/changes/add-claude-pending-board/specs/pending-board/spec.md) — requirements and scenarios
-- [`openspec/changes/add-claude-pending-board/tasks.md`](./openspec/changes/add-claude-pending-board/tasks.md) — implementation checklist
+- [`openspec/changes/archive/add-claude-pending-board/proposal.md`](./openspec/changes/archive/add-claude-pending-board/proposal.md) — what and why
+- [`openspec/changes/archive/add-claude-pending-board/design.md`](./openspec/changes/archive/add-claude-pending-board/design.md) — technical design
+- [`openspec/changes/archive/add-claude-pending-board/specs/pending-board/spec.md`](./openspec/changes/archive/add-claude-pending-board/specs/pending-board/spec.md) — requirements and scenarios
+- [`openspec/changes/archive/add-claude-pending-board/tasks.md`](./openspec/changes/archive/add-claude-pending-board/tasks.md) — implementation checklist
 - [`docs/release-checklist.md`](./docs/release-checklist.md) — manual UX checklist per release
 
 ## Contributing
