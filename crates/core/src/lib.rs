@@ -1,4 +1,4 @@
-//! Core library for Claude Pending Board.
+//! Core library for IHSTAY.
 //!
 //! This crate contains the platform-agnostic logic:
 //!

@@ -1,6 +1,8 @@
-# Claude Pending Board
+# IHSTAY
 
-[![CI](https://github.com/sadwx/claude-pending-board/actions/workflows/ci.yml/badge.svg)](https://github.com/sadwx/claude-pending-board/actions/workflows/ci.yml)
+> *I Have Something To Ask You* — a tray HUD that surfaces every waiting Claude Code session.
+
+[![CI](https://github.com/sadwx/ihstay/actions/workflows/ci.yml/badge.svg)](https://github.com/sadwx/ihstay/actions/workflows/ci.yml)
 [![Platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20macOS-blue)](#requirements)
 
 A cross-platform tray app that surfaces every Claude Code CLI session waiting for your input — across projects, across terminals, in one floating window.
@@ -11,11 +13,11 @@ A cross-platform tray app that surfaces every Claude Code CLI session waiting fo
 
 Claude Code sessions stall regularly: a `permission_prompt` waits for your approval, an `idle_prompt` waits for your next instruction. If you run several Claude Code sessions in parallel terminal tabs you lose flow finding the one that's waiting.
 
-Claude Pending Board watches every session and pushes a single floating window when one of them needs you. Click an entry and it brings the exact WezTerm or iTerm2 pane that owns the session to the foreground. Answer the prompt, the window hides itself, you get back to what you were doing.
+IHSTAY watches every session and pushes a single floating window when one of them needs you. Click an entry and it brings the exact WezTerm or iTerm2 pane that owns the session to the foreground. Answer the prompt, the window hides itself, you get back to what you were doing.
 
 ## Status
 
-**Alpha (v0.1.0 pre-release).** First tagged release is available on the [releases page](https://github.com/sadwx/claude-pending-board/releases). Binaries are unsigned during alpha — SmartScreen / Gatekeeper warnings are expected. See [`INSTALL.md`](./INSTALL.md) for install notes.
+**Alpha (v0.1.0 pre-release).** First tagged release is available on the [releases page](https://github.com/sadwx/ihstay/releases). Binaries are unsigned during alpha — SmartScreen / Gatekeeper warnings are expected. See [`INSTALL.md`](./INSTALL.md) for install notes.
 
 ## How it works (high level)
 
@@ -54,11 +56,11 @@ Windows Terminal is explicitly **not supported** as a focus target because its p
 
 Two steps:
 
-1. Download the MSI (Windows) or DMG (macOS) from the [releases page](https://github.com/sadwx/claude-pending-board/releases) and install. Launch the app — a pink "C" icon appears in the tray.
+1. Download the MSI (Windows) or DMG (macOS) from the [releases page](https://github.com/sadwx/ihstay/releases) and install. Launch the app — a pink "C" icon appears in the tray.
 2. Click the tray icon to open the HUD. On the first-run card, click **[Install plugin]** — the app shells out to `claude plugin` to register the hooks. Alternatively, run from any terminal:
    ```bash
-   claude plugin marketplace add sadwx/claude-pending-board
-   claude plugin install claude-pending-board@claude-pending-board
+   claude plugin marketplace add sadwx/ihstay
+   claude plugin install ihstay@ihstay
    ```
 
 See [`INSTALL.md`](./INSTALL.md) for SmartScreen / Gatekeeper notes, verification, troubleshooting, and build-from-source instructions.
