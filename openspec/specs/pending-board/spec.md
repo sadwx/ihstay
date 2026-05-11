@@ -120,7 +120,7 @@ The system SHALL present pending entries in a fixed-size floating window that do
 
 - **WHEN** the HUD is visible
 - **THEN** it SHALL be 380 × 240 pixels (sized to show ~3 entry rows before scrolling), non-resizable, draggable by its header bar, with rounded corners and a drop shadow
-- **AND** the header SHALL contain a logo glyph, the title "Pending Board", a count badge, a settings gear, and a dismiss `×` button
+- **AND** the header SHALL contain a logo glyph, the title "IHSTAY", a count badge, a settings gear, and a dismiss `×` button
 
 #### Scenario: List scrolls when overflowing
 
