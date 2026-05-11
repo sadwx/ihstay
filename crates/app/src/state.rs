@@ -1,8 +1,8 @@
-use claude_pending_board_adapters::AdapterRegistry;
-use claude_pending_board_core::board::store::StateStore;
-use claude_pending_board_core::config::Config;
-use claude_pending_board_core::types::Entry;
-use claude_pending_board_core::visibility::{VisibilityController, WallClock};
+use ihstay_adapters::AdapterRegistry;
+use ihstay_core::board::store::StateStore;
+use ihstay_core::config::Config;
+use ihstay_core::types::Entry;
+use ihstay_core::visibility::{VisibilityController, WallClock};
 use std::sync::{Arc, Mutex};
 
 pub struct AppState {

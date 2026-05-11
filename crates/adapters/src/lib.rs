@@ -2,7 +2,7 @@
 pub mod iterm2;
 pub mod wezterm;
 
-use claude_pending_board_core::terminal::TerminalAdapter;
+use ihstay_core::terminal::TerminalAdapter;
 
 /// Registry of available terminal adapters.
 pub struct AdapterRegistry {
@@ -22,10 +22,7 @@ impl AdapterRegistry {
     pub fn detect(
         &self,
         claude_pid: u32,
-    ) -> Option<(
-        &dyn TerminalAdapter,
-        claude_pending_board_core::types::TerminalMatch,
-    )> {
+    ) -> Option<(&dyn TerminalAdapter, ihstay_core::types::TerminalMatch)> {
         for adapter in &self.adapters {
             if let Some(m) = adapter.detect(claude_pid) {
                 return Some((adapter.as_ref(), m));

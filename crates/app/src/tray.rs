@@ -22,14 +22,14 @@ pub fn setup(app: &App) -> Result<(), Box<dyn std::error::Error>> {
                 let state: tauri::State<crate::state::SharedState> = app.state();
                 let mut s = state.lock().unwrap();
                 let entries = s.entries();
-                let action = s.visibility.handle(
-                    claude_pending_board_core::visibility::VisibilityEvent::ManualOpen {
-                        board_count: entries.len(),
-                    },
-                );
+                let action =
+                    s.visibility
+                        .handle(ihstay_core::visibility::VisibilityEvent::ManualOpen {
+                            board_count: entries.len(),
+                        });
                 drop(s);
 
-                if action == claude_pending_board_core::visibility::VisibilityAction::ShowHud {
+                if action == ihstay_core::visibility::VisibilityAction::ShowHud {
                     if let Some(window) = app.get_webview_window("hud") {
                         crate::hud_show::show_without_activation(&window);
                         let _ = tauri::Emitter::emit(app, "entries-updated", &entries);
@@ -57,14 +57,14 @@ pub fn setup(app: &App) -> Result<(), Box<dyn std::error::Error>> {
                 let state: tauri::State<crate::state::SharedState> = app.state();
                 let mut s = state.lock().unwrap();
                 let entries = s.entries();
-                let action = s.visibility.handle(
-                    claude_pending_board_core::visibility::VisibilityEvent::ManualOpen {
-                        board_count: entries.len(),
-                    },
-                );
+                let action =
+                    s.visibility
+                        .handle(ihstay_core::visibility::VisibilityEvent::ManualOpen {
+                            board_count: entries.len(),
+                        });
                 drop(s);
 
-                if action == claude_pending_board_core::visibility::VisibilityAction::ShowHud {
+                if action == ihstay_core::visibility::VisibilityAction::ShowHud {
                     if let Some(window) = app.get_webview_window("hud") {
                         crate::hud_show::show_without_activation(&window);
                         let _ = tauri::Emitter::emit(app, "entries-updated", &entries);

@@ -1,12 +1,12 @@
 [package]
-name = "claude-pending-board-app"
+name = "ihstay-app"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
 
 [dependencies]
-claude-pending-board-core = { path = "../core" }
-claude-pending-board-adapters = { path = "../adapters" }
+ihstay-core = { path = "../core" }
+ihstay-adapters = { path = "../adapters" }
 tauri = { version = "2", features = ["tray-icon", "devtools", "macos-private-api"] }
 tauri-plugin-single-instance = "2"
 tokio = { workspace = true }

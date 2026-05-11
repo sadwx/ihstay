@@ -459,65 +459,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "claude-pending-board-adapters"
-version = "0.3.0"
-dependencies = [
- "claude-pending-board-core",
- "dirs-next",
- "serde",
- "serde_json",
- "sysinfo",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
- "windows 0.61.3",
-]
-
-[[package]]
-name = "claude-pending-board-app"
-version = "0.3.0"
-dependencies = [
- "chrono",
- "claude-pending-board-adapters",
- "claude-pending-board-core",
- "dirs-next",
- "notify",
- "notify-debouncer-full",
- "objc2 0.5.2",
- "serde",
- "serde_json",
- "sysinfo",
- "tauri",
- "tauri-build",
- "tauri-plugin-single-instance",
- "tempfile",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "windows 0.61.3",
- "winreg",
-]
-
-[[package]]
-name = "claude-pending-board-core"
-version = "0.3.0"
-dependencies = [
- "chrono",
- "dirs-next",
- "notify",
- "notify-debouncer-full",
- "serde",
- "serde_json",
- "sysinfo",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "toml 0.8.2",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
 name = "combine"
 version = "4.6.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1859,6 +1800,65 @@ checksum = "3acae9609540aa318d1bc588455225fb2085b9ed0c4f6bd0d9d5bcd86f1a0344"
 dependencies = [
  "icu_normalizer",
  "icu_properties",
+]
+
+[[package]]
+name = "ihstay-adapters"
+version = "0.3.0"
+dependencies = [
+ "dirs-next",
+ "ihstay-core",
+ "serde",
+ "serde_json",
+ "sysinfo",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+ "windows 0.61.3",
+]
+
+[[package]]
+name = "ihstay-app"
+version = "0.3.0"
+dependencies = [
+ "chrono",
+ "dirs-next",
+ "ihstay-adapters",
+ "ihstay-core",
+ "notify",
+ "notify-debouncer-full",
+ "objc2 0.5.2",
+ "serde",
+ "serde_json",
+ "sysinfo",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-single-instance",
+ "tempfile",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "windows 0.61.3",
+ "winreg",
+]
+
+[[package]]
+name = "ihstay-core"
+version = "0.3.0"
+dependencies = [
+ "chrono",
+ "dirs-next",
+ "notify",
+ "notify-debouncer-full",
+ "serde",
+ "serde_json",
+ "sysinfo",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "toml 0.8.2",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]

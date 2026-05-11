@@ -1,7 +1,7 @@
 #![cfg(target_os = "macos")]
 
-use claude_pending_board_core::terminal::{AdapterError, TerminalAdapter};
-use claude_pending_board_core::types::TerminalMatch;
+use ihstay_core::terminal::{AdapterError, TerminalAdapter};
+use ihstay_core::types::TerminalMatch;
 use std::path::Path;
 use std::process::Command;
 
@@ -64,8 +64,7 @@ impl TerminalAdapter for ITerm2Adapter {
     }
 
     fn detect(&self, claude_pid: u32) -> Option<TerminalMatch> {
-        let (terminal_name, terminal_pid) =
-            claude_pending_board_core::terminal::ancestor_walk(claude_pid, 20)?;
+        let (terminal_name, terminal_pid) = ihstay_core::terminal::ancestor_walk(claude_pid, 20)?;
 
         if !terminal_name.contains("iTerm") {
             return None;

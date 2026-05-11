@@ -1,10 +1,10 @@
 use crate::state::SharedState;
 use chrono::{Duration, Utc};
-use claude_pending_board_core::board::compaction;
-use claude_pending_board_core::board::watcher::BoardWatcher;
-use claude_pending_board_core::reaper::{self, RealProcessTable, RealSessionFiles};
-use claude_pending_board_core::types::{EntryState, Op};
-use claude_pending_board_core::visibility::{VisibilityAction, VisibilityEvent};
+use ihstay_core::board::compaction;
+use ihstay_core::board::watcher::BoardWatcher;
+use ihstay_core::reaper::{self, RealProcessTable, RealSessionFiles};
+use ihstay_core::types::{EntryState, Op};
+use ihstay_core::visibility::{VisibilityAction, VisibilityEvent};
 use std::path::PathBuf;
 use std::sync::Arc;
 use tauri::{AppHandle, Emitter, Manager};
@@ -106,7 +106,7 @@ pub fn boot(app: &AppHandle, state: SharedState) {
 }
 
 async fn process_ops(
-    mut op_rx: mpsc::UnboundedReceiver<Vec<claude_pending_board_core::types::Op>>,
+    mut op_rx: mpsc::UnboundedReceiver<Vec<ihstay_core::types::Op>>,
     app: AppHandle,
     state: SharedState,
 ) {
