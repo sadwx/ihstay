@@ -1,4 +1,4 @@
-//! Detect whether Claude Code's pending-board plugin is installed and, when
+//! Detect whether Claude Code's `ihstay` plugin is installed and, when
 //! asked, install it by shelling out to the `claude` CLI.
 //!
 //! Architecture note: the tray app installer only drops the binary — it does
