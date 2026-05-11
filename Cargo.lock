@@ -1804,7 +1804,7 @@ dependencies = [
 
 [[package]]
 name = "ihstay-adapters"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "dirs-next",
  "ihstay-core",
@@ -1819,7 +1819,7 @@ dependencies = [
 
 [[package]]
 name = "ihstay-app"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "chrono",
  "dirs-next",
@@ -1844,7 +1844,7 @@ dependencies = [
 
 [[package]]
 name = "ihstay-core"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "chrono",
  "dirs-next",
