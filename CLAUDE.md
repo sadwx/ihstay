@@ -4,14 +4,14 @@ Project-specific context for Claude Code sessions working on this repo.
 
 ## What this is
 
-`claude-pending-board` is a cross-platform tray app that surfaces every waiting Claude Code CLI session in one floating HUD. Claude Code hooks write to `~/.claude/pending/board.jsonl`; the tray app watches that file and renders a HUD, and clicking an entry focuses the owning WezTerm (Windows) or iTerm2 (macOS) pane.
+`ihstay` ("I Have Something To Ask You") is a cross-platform tray app that surfaces every waiting Claude Code CLI session in one floating HUD. Claude Code hooks write to `~/.claude/pending/board.jsonl`; the tray app watches that file and renders a HUD, and clicking an entry focuses the owning WezTerm (Windows) or iTerm2 (macOS) pane.
 
-Design + spec live under `openspec/changes/add-claude-pending-board/`.
+Design + spec live under `openspec/changes/archive/add-claude-pending-board/` (the original change proposal, now archived) and `openspec/specs/pending-board/`.
 
 ## Repo layout
 
 ```
-claude-pending-board/
+ihstay/
 ├── crates/
 │   ├── core/        # pure Rust, no Tauri — parser, store, watcher,
 │   │                # compaction, visibility FSM, reaper, config,
@@ -37,16 +37,16 @@ claude-pending-board/
 
 ```bash
 # Build
-cargo build -p claude-pending-board-app                # debug, Windows
+cargo build -p ihstay-app                               # debug, Windows
 cargo tauri build                                       # release, current OS
 
 # Run
-./target/debug/claude-pending-board-app.exe             # directly
+./target/debug/ihstay-app.exe                           # directly
 cargo tauri dev                                         # with dev tools / hot reload
 
 # Test
 cargo test --workspace                                  # all 66 tests
-cargo test -p claude-pending-board-core -- parser       # filter by module
+cargo test -p ihstay-core -- parser                     # filter by module
 cargo test -- --ignored                                 # contract tests (requires WezTerm)
 
 # Lint / format — MUST pass before committing

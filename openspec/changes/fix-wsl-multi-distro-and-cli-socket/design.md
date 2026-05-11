@@ -90,7 +90,7 @@ Reverse-engineering note: WezTerm's CLI ([cli.rs in wezterm 20240203](https://we
 Plugin and app version both bump to `0.3.0` together. Manual deployment on the user's other laptop:
 
 1. Install the v0.3.0 MSI / install dev build (`cargo install --path crates/app`). On launch, the app appends `WEZTERM_PANE/u:USERPROFILE/up` to `WSLENV`. If wezterm was running, the existing one-shot "restart WezTerm" warning fires.
-2. In each WSL distro: `claude plugin update claude-pending-board` (or `claude plugin install` if not yet installed). The new `pending_hook.sh` ships with the plugin.
+2. In each WSL distro: `claude plugin update ihstay` (or `claude plugin install` if not yet installed). The new `pending_hook.sh` ships with the plugin.
 3. Open a fresh wezterm tab in each distro so the new `WSLENV` is captured.
 4. Trigger a notification (e.g. `claude` + a permission prompt). Verify the entry tagged with the right `wsl_distro` shows up in the Windows-side HUD.
 5. Click the entry. Should focus the right pane. No symlink configured anywhere.

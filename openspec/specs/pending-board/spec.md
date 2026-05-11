@@ -314,8 +314,8 @@ The system SHALL provide two equivalent installation paths for the hook scripts:
 
 #### Scenario: Plugin marketplace install registers hooks
 
-- **WHEN** the user runs `claude plugin marketplace add sadwx/claude-pending-board` followed by `claude plugin install claude-pending-board@claude-pending-board` (or the equivalent slash commands inside Claude Code)
-- **THEN** the marketplace catalog at `.claude-plugin/marketplace.json` SHALL list `claude-pending-board` with `source = "./plugin"`
+- **WHEN** the user runs `claude plugin marketplace add sadwx/ihstay` followed by `claude plugin install ihstay@ihstay` (or the equivalent slash commands inside Claude Code)
+- **THEN** the marketplace catalog at `.claude-plugin/marketplace.json` SHALL list `ihstay` with `source = "./plugin"`
 - **AND** the plugin's `plugin.json` SHALL register the five hooks (`Notification`, `UserPromptSubmit`, `Stop`, `SessionEnd`, `PermissionDenied`) pointing to platform-appropriate scripts bundled inside the plugin, with one entry per supported platform (`windows`, `darwin`, `linux`) per event
 - **AND** every command line SHALL end with `|| exit 0` so a missing launcher (`pwsh` on Unix, `bash` on a bare Windows install) does not surface as a hook failure to Claude Code (workaround: Claude Code 2.1.x ignores the `platform` field on hook entries, so every entry runs on every OS)
 - **AND** no changes SHALL be made to the user's global `~/.claude/settings.json`
@@ -329,13 +329,13 @@ The system SHALL provide two equivalent installation paths for the hook scripts:
 #### Scenario: One-click install from the setup card
 
 - **WHEN** the user clicks `[Install plugin]` on the setup card
-- **THEN** the app SHALL shell out to `claude plugin marketplace add sadwx/claude-pending-board` and then `claude plugin install claude-pending-board@claude-pending-board` running as the user
+- **THEN** the app SHALL shell out to `claude plugin marketplace add sadwx/ihstay` and then `claude plugin install ihstay@ihstay` running as the user
 - **AND** on success the setup card SHALL self-clear and the HUD SHALL render the regular empty state
 - **AND** on failure (e.g. `claude` CLI not in PATH) an inline error SHALL be shown with the stderr from the CLI and the manual instructions SHALL remain accessible
 
 #### Scenario: Doctor diagnoses a broken install
 
-- **WHEN** the user runs `/pending-board doctor`
+- **WHEN** the user runs `/ihstay doctor`
 - **THEN** the plugin SHALL verify that the registered hooks exist, that the script files exist and are executable, that `~/.claude/pending/board.jsonl` is writable, and that the configured terminal adapter binary is in `PATH`
 - **AND** SHALL report any failed checks with remediation hints
 
@@ -357,14 +357,14 @@ The tray app SHALL strip foreign-platform hook entries from the installed `plugi
 
 #### Scenario: Sanitize on demand via CLI flag
 
-- **WHEN** the user invokes the binary as `claude-pending-board-app --sanitize-manifest`
+- **WHEN** the user invokes the binary as `ihstay-app --sanitize-manifest`
 - **THEN** the binary SHALL run sanitize without booting Tauri, print `removed N foreign-platform hook entries from plugin.json.` (or `plugin.json already clean — no foreign-platform entries.` when N = 0) to stderr, and exit with status 0
 - **AND** SHALL exit with status 1 and a `sanitize failed: <reason>` message on error
 - **AND** the operation SHALL be idempotent: re-running on an already-clean manifest SHALL report `already clean`
 
 #### Scenario: Auto-sanitize on plugin cache change
 
-- **WHEN** the tray app is running and any filesystem event under `~/.claude/plugins/cache/` mentions a path component named `claude-pending-board` (typical of `claude plugin install` / `claude plugin update` / marketplace auto-update creating or replacing a version directory)
+- **WHEN** the tray app is running and any filesystem event under `~/.claude/plugins/cache/` mentions a path component named `ihstay` (typical of `claude plugin install` / `claude plugin update` / marketplace auto-update creating or replacing a version directory)
 - **THEN** the app SHALL coalesce the burst of events through a debounce window (1.5 s, chosen so a single install settles inside it but stale duplicates clear within ~2 s of the install completing)
 - **AND** SHALL run the sanitize routine once per debounced burst
 - **AND** filesystem events that touch other plugins' cache subdirectories SHALL NOT trigger a sanitize call

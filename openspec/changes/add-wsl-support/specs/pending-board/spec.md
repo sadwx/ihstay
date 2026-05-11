@@ -184,10 +184,10 @@ This addresses the practical reality that WezTerm reads `WSLENV` once at process
 
 ### Requirement: Plugin manifest covers Linux platforms
 
-The Claude Code plugin SHALL register its bash hook script for the `linux` platform in addition to `windows` and `darwin`, so that running `claude plugin install claude-pending-board@claude-pending-board` inside WSL registers all three hooks without manual `settings.json` editing.
+The Claude Code plugin SHALL register its bash hook script for the `linux` platform in addition to `windows` and `darwin`, so that running `claude plugin install ihstay@ihstay` inside WSL registers all three hooks without manual `settings.json` editing.
 
 #### Scenario: Plugin install from inside WSL
 
-- **WHEN** a user runs `claude plugin marketplace add sadwx/claude-pending-board` followed by `claude plugin install claude-pending-board@claude-pending-board` inside a WSL distro
+- **WHEN** a user runs `claude plugin marketplace add sadwx/ihstay` followed by `claude plugin install ihstay@ihstay` inside a WSL distro
 - **THEN** Claude Code SHALL register the bash variant of `pending_hook.sh` for the `Notification`, `UserPromptSubmit`, and `Stop` events under the user's `~/.claude/settings.json` (or its plugin equivalent)
 - **AND** subsequent Claude sessions inside that WSL distro SHALL fire the hook on every event without further configuration
