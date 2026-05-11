@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# smoke-test.sh — Interactive smoke test for Claude Pending Board
+# smoke-test.sh — Interactive smoke test for IHSTAY
 # Usage: bash scripts/smoke-test.sh
 
 BOARD_DIR="$HOME/.claude/pending"
@@ -23,7 +23,7 @@ header() {
 # Clean slate
 rm -f "$BOARD_FILE"
 echo ""
-echo "  Claude Pending Board — Smoke Test"
+echo "  IHSTAY — Smoke Test"
 echo "  Make sure the app is running (cargo tauri dev)"
 echo ""
 

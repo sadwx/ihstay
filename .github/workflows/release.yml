@@ -36,8 +36,8 @@ jobs:
         with:
           projectPath: crates/app
           tagName: ${{ github.ref_name }}
-          releaseName: "Claude Pending Board ${{ github.ref_name }}"
-          releaseBody: "See the release notes below and [docs/release-checklist.md](https://github.com/sadwx/claude-pending-board/blob/main/docs/release-checklist.md) for the manual verification steps."
+          releaseName: "IHSTAY ${{ github.ref_name }}"
+          releaseBody: "See the release notes below and [docs/release-checklist.md](https://github.com/sadwx/ihstay/blob/main/docs/release-checklist.md) for the manual verification steps."
           releaseDraft: true
           prerelease: true
           args: ${{ matrix.args }}
