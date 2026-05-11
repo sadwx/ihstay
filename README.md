@@ -1,6 +1,8 @@
+> *I Have Something To Ask You*
+
 # IHSTAY
 
-> *I Have Something To Ask You* — a tray HUD that surfaces every waiting Claude Code session.
+A tray HUD that surfaces every waiting Claude Code session.
 
 [![CI](https://github.com/sadwx/ihstay/actions/workflows/ci.yml/badge.svg)](https://github.com/sadwx/ihstay/actions/workflows/ci.yml)
 [![Platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20macOS-blue)](#requirements)
