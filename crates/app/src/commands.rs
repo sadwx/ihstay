@@ -1,7 +1,7 @@
 use crate::state::SharedState;
-use claude_pending_board_core::config::Config;
-use claude_pending_board_core::types::Entry;
-use claude_pending_board_core::visibility::{VisibilityAction, VisibilityEvent};
+use ihstay_core::config::Config;
+use ihstay_core::types::Entry;
+use ihstay_core::visibility::{VisibilityAction, VisibilityEvent};
 use tauri::{AppHandle, Emitter, Manager, State};
 
 #[tauri::command]
@@ -12,7 +12,7 @@ pub fn list_entries(state: State<SharedState>) -> Vec<Entry> {
 
 #[tauri::command]
 pub fn focus_entry(state: State<SharedState>, session_id: String) -> Result<String, String> {
-    use claude_pending_board_core::types::{EntryState, TerminalMatch};
+    use ihstay_core::types::{EntryState, TerminalMatch};
 
     // Collect everything we need from state under the lock, then drop it
     // before calling adapter methods (which shell out and can block).
@@ -289,7 +289,7 @@ pub async fn install_plugin() -> Result<(), String> {
 /// periodic stale-cleanup loop.
 #[tauri::command]
 pub fn dismiss_entry(session_id: String) -> Result<(), String> {
-    use claude_pending_board_core::types::Op;
+    use ihstay_core::types::Op;
     use std::io::Write;
 
     let home = dirs_next::home_dir().ok_or_else(|| "no home dir".to_string())?;

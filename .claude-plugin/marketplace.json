@@ -1,16 +1,16 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
-  "name": "claude-pending-board",
+  "name": "ihstay",
   "owner": {
     "name": "sadwx",
     "url": "https://github.com/sadwx"
   },
   "plugins": [
     {
-      "name": "claude-pending-board",
+      "name": "ihstay",
       "source": "./plugin",
-      "description": "Registers Claude Code hooks that feed the Claude Pending Board tray app, surfacing every waiting Claude session in one floating HUD.",
-      "version": "0.2.0"
+      "description": "IHSTAY (I Have Something To Ask You) — registers Claude Code hooks that feed the IHSTAY tray app, surfacing every waiting Claude session in one floating HUD.",
+      "version": "0.4.0"
     }
   ]
 }

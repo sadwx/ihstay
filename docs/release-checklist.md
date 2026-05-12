@@ -31,8 +31,8 @@ Install the release artifact. Then run through:
 
 ## Plugin tests
 
-- [ ] `/plugin install claude-pending-board` from marketplace succeeds
-- [ ] `/pending-board doctor` passes all checks with tray app + WezTerm installed
+- [ ] `/plugin install ihstay` from marketplace succeeds
+- [ ] `/ihstay doctor` passes all checks with tray app + WezTerm installed
 - [ ] Real Claude Code session with permission prompt writes to board.jsonl within 100ms
 
 ## Multi-monitor

@@ -53,7 +53,7 @@ fn main() {
                 "hud",
                 tauri::WebviewUrl::App("hud/index.html".into()),
             )
-            .title("Claude Pending Board")
+            .title("IHSTAY")
             .inner_size(380.0, 240.0)
             .resizable(false)
             .decorations(false)
@@ -71,7 +71,7 @@ fn main() {
                 "settings",
                 tauri::WebviewUrl::App("settings/index.html".into()),
             )
-            .title("Settings - Claude Pending Board")
+            .title("Settings - IHSTAY")
             .inner_size(480.0, 500.0)
             .resizable(true)
             .visible(false)
@@ -134,7 +134,7 @@ fn main() {
                 });
             }
 
-            tracing::info!("Claude Pending Board started");
+            tracing::info!("IHSTAY started");
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -173,8 +173,8 @@ fn init_tracing() {
     use std::sync::Mutex;
     use tracing_subscriber::EnvFilter;
 
-    let env_filter = EnvFilter::try_from_default_env()
-        .unwrap_or_else(|_| EnvFilter::new("claude_pending_board=info"));
+    let env_filter =
+        EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("ihstay=info"));
 
     let log_file = dirs_next::home_dir().and_then(|home| {
         let dir = home.join(".claude/pending/logs");

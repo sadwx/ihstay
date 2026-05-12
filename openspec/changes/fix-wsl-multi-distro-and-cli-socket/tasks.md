@@ -41,7 +41,7 @@
 - [ ] 6.1 Bump `[workspace.package].version` in `Cargo.toml` from `0.2.8` to `0.3.0`.
 - [ ] 6.2 Bump `version` in `plugin/.claude-plugin/plugin.json` from `0.2.8` (or current auto-bumped value) to `0.3.0`.
 - [ ] 6.3 Bump `version` in `crates/app/tauri.conf.json` to `0.3.0`.
-- [ ] 6.4 Run `cargo test -p claude-pending-board-core --test plugin_version_sync` to confirm the cross-file equality check passes.
+- [ ] 6.4 Run `cargo test -p ihstay-core --test plugin_version_sync` to confirm the cross-file equality check passes.
 
 ## 7. Docs
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env pwsh
-# smoke-test.ps1 — Interactive smoke test for Claude Pending Board
+# smoke-test.ps1 — Interactive smoke test for IHSTAY
 # Usage: pwsh scripts/smoke-test.ps1
 
 $boardDir = Join-Path $HOME ".claude" "pending"
@@ -27,7 +27,7 @@ function Show-Header($step, $title) {
 # --- Clean slate ---
 if (Test-Path $boardFile) { Remove-Item $boardFile -Force }
 Write-Host ""
-Write-Host "  Claude Pending Board — Smoke Test" -ForegroundColor Magenta
+Write-Host "  IHSTAY — Smoke Test" -ForegroundColor Magenta
 Write-Host "  Make sure the app is running (cargo tauri dev)" -ForegroundColor DarkGray
 Write-Host ""
 

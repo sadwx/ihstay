@@ -4,7 +4,7 @@
 //! board.jsonl on disk → parser → store → compaction round-trip.
 
 use chrono::{Duration, Utc};
-use claude_pending_board_core::board::{compaction, parser, store::StateStore};
+use ihstay_core::board::{compaction, parser, store::StateStore};
 use std::fs;
 use std::path::PathBuf;
 use tempfile::TempDir;

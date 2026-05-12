@@ -1,5 +1,5 @@
-use claude_pending_board_core::terminal::{AdapterError, TerminalAdapter};
-use claude_pending_board_core::types::TerminalMatch;
+use ihstay_core::terminal::{AdapterError, TerminalAdapter};
+use ihstay_core::types::TerminalMatch;
 use serde::Deserialize;
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -186,8 +186,7 @@ impl WezTermAdapter {
     }
 
     fn find_pane_for_pid(claude_pid: u32, panes: &[WezTermPane]) -> Option<(u64, TerminalMatch)> {
-        let (terminal_name, terminal_pid) =
-            claude_pending_board_core::terminal::ancestor_walk(claude_pid, 20)?;
+        let (terminal_name, terminal_pid) = ihstay_core::terminal::ancestor_walk(claude_pid, 20)?;
 
         if let Some(pane) = panes.first() {
             return Some((

@@ -53,7 +53,7 @@ WEZTERM_PANE click-to-focus (bundled in):
 
 - [ ] PR-A merged: WSL PoC entries on the test machine no longer go stale within seconds. Wait at least one reaper sweep (30 s) after firing a WSL hook and confirm the entry is still `Live`.
 - [ ] PR-C merged: clicking a WSL entry opens a WezTerm tab inside the right distro and runs `claude --resume`; the prompt actually returns to the user.
-- [ ] PR-B merged: in WSL, `claude plugin install claude-pending-board@claude-pending-board` registers all three hooks without manual settings.json editing. The maintainer reverts the PoC settings.json (backup is at `~/.claude/settings.json.pre-pending-board-poc`).
+- [ ] PR-B merged: in WSL, `claude plugin install ihstay@ihstay` registers all three hooks without manual settings.json editing. The maintainer reverts the PoC settings.json (backup is at `~/.claude/settings.json.pre-pending-board-poc`).
 - [ ] Documentation: `INSTALL.md` has a "WSL" section with the caveats listed above.
 
 ## Deferred to a later change

@@ -12,7 +12,7 @@
 # Those require manual testing — see scripts/smoke-test.ps1.
 
 param(
-    [string]$AppPath = (Join-Path $PSScriptRoot ".." "target" "debug" "claude-pending-board-app.exe"),
+    [string]$AppPath = (Join-Path $PSScriptRoot ".." "target" "debug" "ihstay-app.exe"),
     [int]$ReaperWaitSeconds = 35
 )
 
@@ -54,7 +54,7 @@ function WriteBoard($line) {
 function Ts() { (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ") }
 
 # Kill any existing instance so we start clean
-$existing = Get-Process -Name "claude-pending-board-app" -ErrorAction SilentlyContinue
+$existing = Get-Process -Name "ihstay-app" -ErrorAction SilentlyContinue
 if ($existing) {
     Write-Host "Killing existing instance (PID $($existing.Id))..." -ForegroundColor DarkGray
     Stop-Process -Id $existing.Id -Force
@@ -66,19 +66,19 @@ if (Test-Path $boardFile) { Remove-Item $boardFile -Force }
 if (Test-Path $configFile) { Remove-Item $configFile -Force }
 
 Write-Host ""
-Write-Host "Claude Pending Board — automated smoke test" -ForegroundColor Magenta
+Write-Host "IHSTAY — automated smoke test" -ForegroundColor Magenta
 Write-Host "App: $AppPath" -ForegroundColor DarkGray
 Write-Host ""
 
 # Verify app binary exists
 if (-not (Test-Path $AppPath)) {
     Write-Host "  FAIL: app binary not found at $AppPath" -ForegroundColor Red
-    Write-Host "  Run: cargo build -p claude-pending-board-app" -ForegroundColor Yellow
+    Write-Host "  Run: cargo build -p ihstay-app" -ForegroundColor Yellow
     exit 1
 }
 
 # Launch app with log capture
-$logFile = Join-Path $env:TEMP "claude-pending-smoke-$(Get-Random).log"
+$logFile = Join-Path $env:TEMP "ihstay-smoke-$(Get-Random).log"
 $appProcess = Start-Process -FilePath $AppPath -PassThru `
     -RedirectStandardOutput $logFile -RedirectStandardError "$logFile.err" `
     -WindowStyle Hidden

@@ -1,7 +1,7 @@
 {
-  "productName": "Claude Pending Board",
-  "version": "0.3.0",
-  "identifier": "com.claude-pending-board.app",
+  "productName": "IHSTAY",
+  "version": "0.4.0",
+  "identifier": "com.ihstay.app",
   "build": {
     "frontendDist": "ui"
   },

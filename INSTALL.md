@@ -1,4 +1,4 @@
-# Installing Claude Pending Board
+# Installing IHSTAY
 
 End-user install guide.
 
@@ -18,17 +18,17 @@ Windows Terminal is not supported as a focus target (cannot programmatically act
 
 ### Step 1 · Install the tray app
 
-Download the artifact for your OS from the [releases page](https://github.com/sadwx/claude-pending-board/releases):
+Download the artifact for your OS from the [releases page](https://github.com/sadwx/ihstay/releases):
 
 | OS | File | Notes |
 |---|---|---|
-| Windows | `Claude.Pending.Board_<version>_x64_en-US.msi` | MSI installer. Double-click, approve UAC. |
-| Windows | `Claude.Pending.Board_<version>_x64-setup.exe` | NSIS portable-style installer. |
-| macOS | `Claude.Pending.Board_<version>_universal.dmg` | Drag to Applications. |
+| Windows | `IHSTAY_<version>_x64_en-US.msi` | MSI installer. Double-click, approve UAC. |
+| Windows | `IHSTAY_<version>_x64-setup.exe` | NSIS portable-style installer. |
+| macOS | `IHSTAY_<version>_universal.dmg` | Drag to Applications. |
 
 **Windows**: SmartScreen may warn "Windows protected your PC". Click *More info → Run anyway*. This is expected because the artifact is unsigned during alpha.
 
-**macOS**: Gatekeeper may say "can't be opened". Right-click the app → *Open*, or run `xattr -dr com.apple.quarantine /Applications/Claude\ Pending\ Board.app` once to clear the quarantine attribute.
+**macOS**: Gatekeeper may say "can't be opened". Right-click the app → *Open*, or run `xattr -dr com.apple.quarantine /Applications/IHSTAY.app` once to clear the quarantine attribute.
 
 After install, launch the app. A Catppuccin-pink "C" icon appears in the tray.
 
@@ -39,15 +39,15 @@ The tray app won't see any sessions until the plugin is registered. The easiest 
 If you prefer the CLI directly:
 
 ```bash
-claude plugin marketplace add sadwx/claude-pending-board
-claude plugin install claude-pending-board@claude-pending-board
+claude plugin marketplace add sadwx/ihstay
+claude plugin install ihstay@ihstay
 ```
 
 Or from any Claude Code session:
 
 ```
-/plugin marketplace add github:sadwx/claude-pending-board
-/plugin install claude-pending-board@claude-pending-board
+/plugin marketplace add github:sadwx/ihstay
+/plugin install ihstay@ihstay
 /reload-plugins
 ```
 
@@ -58,8 +58,8 @@ Any of the three paths produces the same result: three hooks (`Notification`, `U
 If you launch Claude Code inside WSL via WezTerm, install the plugin **from inside each WSL distro** you use, not from a native Windows shell. The Linux hook script is what fires there. Open a WSL tab and run:
 
 ```bash
-claude plugin marketplace add sadwx/claude-pending-board
-claude plugin install claude-pending-board@claude-pending-board
+claude plugin marketplace add sadwx/ihstay
+claude plugin install ihstay@ihstay
 ```
 
 Repeat for every distro that runs Claude Code (Ubuntu, Debian, custom distros — each one needs its own `claude plugin install`).
@@ -127,8 +127,8 @@ Claude Code 2.1.x ignores the `platform` field on hook entries, so the bundled `
 If you don't keep the tray app running, fresh installs will leave the foreign entries in place until you launch the app. To do the cleanup without launching the app, run the binary with `--sanitize-manifest`:
 
 ```bash
-claude-pending-board-app --sanitize-manifest        # macOS / Linux
-"C:\Program Files\Claude Pending Board\claude-pending-board-app.exe" --sanitize-manifest   # Windows
+ihstay-app --sanitize-manifest        # macOS / Linux
+"C:\Program Files\IHSTAY\ihstay-app.exe" --sanitize-manifest   # Windows
 ```
 
 It exits immediately after rewriting `~/.claude/plugins/cache/.../plugin.json`. Idempotent — running it on an already-clean manifest is a no-op. Wire it to a `launchd`/`systemd`/Task Scheduler unit if you want it to run automatically after each `claude plugin update`.
@@ -136,7 +136,7 @@ It exits immediately after rewriting `~/.claude/plugins/cache/.../plugin.json`. 
 ### The HUD never appears when I trigger a permission prompt
 
 1. Reopen the HUD (tray left-click). If it shows the "Hooks not installed" setup card, the plugin step was skipped — run the install from the card or the CLI commands above.
-2. Check the plugin list: `claude plugin list` should include `claude-pending-board`.
+2. Check the plugin list: `claude plugin list` should include `ihstay`.
 3. Tail `~/.claude/pending/logs/hook-errors.log` — if a hook fired but errored, the error lives here.
 4. Tail `~/.claude/pending/board.jsonl` — if the hook wrote a line but the app didn't pick it up, restart the app.
 
@@ -171,12 +171,12 @@ Log verbosity defaults to `info`. Flip the "Debug logging" toggle in Settings fo
 
 1. **Plugin** (hooks):
    ```bash
-   claude plugin uninstall claude-pending-board
+   claude plugin uninstall ihstay
    ```
-   or from inside a Claude session: `/plugin uninstall claude-pending-board`.
+   or from inside a Claude session: `/plugin uninstall ihstay`.
 2. **Tray app**:
-   - Windows: Settings → Apps → uninstall "Claude Pending Board".
-   - macOS: drag `/Applications/Claude Pending Board.app` to Trash.
+   - Windows: Settings → Apps → uninstall "IHSTAY".
+   - macOS: drag `/Applications/IHSTAY.app` to Trash.
 3. **State files** (optional — if you want a fully clean slate): delete `~/.claude/pending/`.
 
 ## Appendix A · Build from source
@@ -190,8 +190,8 @@ Required:
 Steps:
 
 ```bash
-git clone https://github.com/sadwx/claude-pending-board
-cd claude-pending-board
+git clone https://github.com/sadwx/ihstay
+cd ihstay
 cargo tauri build
 ```
 
