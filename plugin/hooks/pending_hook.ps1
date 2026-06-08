@@ -15,9 +15,14 @@ if (($null -ne $IsWindows) -and (-not $IsWindows)) {
 }
 
 try {
-    # Read JSON payload from stdin
-    $rawInput = $input | Out-String
-    if (-not $rawInput.Trim()) {
+    # Read JSON payload from stdin. Use [Console]::In.ReadToEnd() — a blocking
+    # read of the entire stream to EOF (the bash hook's `cat` equivalent) —
+    # rather than `$input | Out-String`. The latter enumerates stdin as
+    # line-objects and re-renders them, which intermittently produced a
+    # truncated or trailing-garbage string that broke ConvertFrom-Json mid
+    # payload (errors logged at Path 'prompt' / 'last_assistant_message').
+    $rawInput = [Console]::In.ReadToEnd()
+    if ([string]::IsNullOrWhiteSpace($rawInput)) {
         exit 0
     }
     $payload = $rawInput | ConvertFrom-Json
