@@ -15,13 +15,25 @@ if (($null -ne $IsWindows) -and (-not $IsWindows)) {
 }
 
 try {
-    # Read JSON payload from stdin. Use [Console]::In.ReadToEnd() — a blocking
-    # read of the entire stream to EOF (the bash hook's `cat` equivalent) —
-    # rather than `$input | Out-String`. The latter enumerates stdin as
-    # line-objects and re-renders them, which intermittently produced a
-    # truncated or trailing-garbage string that broke ConvertFrom-Json mid
-    # payload (errors logged at Path 'prompt' / 'last_assistant_message').
-    $rawInput = [Console]::In.ReadToEnd()
+    # Read the JSON payload from stdin as UTF-8, independent of the console
+    # code page. [Console]::In.ReadToEnd() decodes with [Console]::InputEncoding,
+    # which on a non-UTF-8 system is the OEM code page (e.g. Big5/CP950 on
+    # zh-TW Windows). Claude Code always sends UTF-8, so any multi-byte char in
+    # the payload — CJK or emoji in `last_assistant_message`, a non-ASCII cwd —
+    # was mis-decoded and corrupted the string, breaking ConvertFrom-Json
+    # (errors logged at Path 'last_assistant_message' / 'cwd'). Reading the raw
+    # stdin stream through an explicit UTF-8 StreamReader is correct regardless
+    # of code page. This supersedes both `$input | Out-String` (which truncated
+    # the payload) and the plain `[Console]::In.ReadToEnd()` that replaced it.
+    $reader = New-Object System.IO.StreamReader(
+        [Console]::OpenStandardInput(),
+        [System.Text.UTF8Encoding]::new($false))
+    try {
+        $rawInput = $reader.ReadToEnd()
+    }
+    finally {
+        $reader.Dispose()
+    }
     if ([string]::IsNullOrWhiteSpace($rawInput)) {
         exit 0
     }
@@ -54,6 +66,12 @@ try {
     switch ($eventName) {
         "Notification" {
             $notificationType = $payload.notification_type
+            # Deliberate whitelist: only prompts that mean "a terminal pane is
+            # waiting for a human". Every other type — auth_success, the MCP
+            # elicitation_* family, and the background-agent notifications
+            # added in Claude Code 2.1.198 (agent_needs_input /
+            # agent_completed, which have no terminal pane to focus) — is
+            # dropped here so it never reaches board.jsonl.
             if ($notificationType -ne "permission_prompt" -and $notificationType -ne "idle_prompt") {
                 exit 0
             }

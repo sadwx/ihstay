@@ -5,16 +5,14 @@
 # per invocation. Runs against an isolated $HOME so it never touches the real
 # ~/.claude/pending board.
 #
-# Guards the stdin-reading path that motivated [Console]::In.ReadToEnd():
-# long `last_assistant_message` / `prompt` payloads must parse and append a
-# clear op, and hook-errors.log must stay empty.
-#
-# NOTE: the original `$input | Out-String` corruption (truncated / trailing
-# JSON, logged under Path 'prompt'/'last_assistant_message') only reproduced
-# inside Claude Code's actual hook spawn, not in a plain `payload | pwsh -File`
-# pipe — so this test does NOT distinguish the old read from the new one in
-# isolation. It is a forward guard: the hook must keep correctly handling
-# oversized payloads and never log a parse error.
+# Guards the stdin-reading path in pending_hook.ps1:
+#   - Cases 1-2: long `last_assistant_message` / `prompt` payloads must parse
+#     and append a clear op (forward guard against the old `$input | Out-String`
+#     truncation, which only reproduced inside Claude Code's real hook spawn).
+#   - Case 5: a UTF-8 CJK/emoji payload fed as raw bytes under a Big5 console
+#     code page — this DOES reproduce the OEM-decode regression that the plain
+#     `[Console]::In.ReadToEnd()` introduced, and fails against the old read.
+# hook-errors.log must stay empty across the whole run.
 #
 # Exit code = number of failed checks (0 = all pass), so CI can gate on it.
 
@@ -126,7 +124,35 @@ Check "empty stdin is a clean no-op" {
     $LASTEXITCODE -eq 0
 }
 
-# 5. The whole run must not have logged a single parse error.
+# 5. UTF-8 payload with CJK + emoji fed as RAW BYTES under a non-UTF-8 console
+#    code page — the real Claude-Code-on-Windows spawn. git-bash -> pwsh
+#    inherits the OEM code page (e.g. Big5/CP950 on zh-TW), and the old
+#    [Console]::In.ReadToEnd() decoded the UTF-8 stdin with it, corrupting
+#    `last_assistant_message` and breaking ConvertFrom-Json. Guards the
+#    explicit UTF-8 StreamReader read. Unlike the string-pipe cases above, a
+#    `$payload | pwsh` pipe CANNOT reproduce this — the bytes must reach stdin
+#    unencoded, so we chcp to Big5 and redirect a UTF-8 file via cmd.exe (both
+#    PowerShell lacks a `<` operator and its pipe re-encodes).
+# Build the message from code points so this file's own encoding can't distort
+# the test input, and via -join (not [char]+[char], which integer-promotes and
+# would collapse the CJK to a number). This exact content — 修好了 ✅ 繁體中文與表情 🚀 測試。 —
+# is a verified deterministic breaker: decoded as Big5 it truncates and the
+# closing quote is swallowed, so the old [Console]::In read fails with
+# "Unterminated string. Path 'last_assistant_message'". The UTF-8 StreamReader
+# read parses it correctly.
+$pre  = -join (0x4FEE, 0x597D, 0x4E86, 0x20, 0x2705, 0x20, 0x7E41, 0x9AD4, 0x4E2D, 0x6587, 0x8207, 0x8868, 0x60C5, 0x20 | ForEach-Object { [char]$_ })
+$post = -join (0x20, 0x6E2C, 0x8A66, 0x3002 | ForEach-Object { [char]$_ })
+$cjkMsg = $pre + [char]::ConvertFromUtf32(0x1F680) + $post
+$utf8Payload = '{"hook_event_name":"Stop","session_id":"44444444-4444-4444-4444-444444444444","cwd":"D:/lab/proj","last_assistant_message":"' + $cjkMsg + '"}'
+$payloadFile = Join-Path $sandbox "payload-utf8.json"
+[System.IO.File]::WriteAllText($payloadFile, $utf8Payload, [System.Text.UTF8Encoding]::new($false))
+cmd.exe /c "chcp 950 >nul & pwsh -NoProfile -ExecutionPolicy Bypass -File `"$hook`" < `"$payloadFile`"" | Out-Null
+
+Check "UTF-8 CJK/emoji payload parses under Big5 code page (raw bytes)" {
+    Is-ClearOp (Last-Line $boardFile) "stop"
+}
+
+# 6. The whole run must not have logged a single parse error.
 Check "no errors logged to hook-errors.log" {
     -not (Test-Path $errorLog)
 }

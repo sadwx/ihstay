@@ -90,6 +90,12 @@ except:
     case "$event_name" in
         Notification)
             notification_type="${notification_type:-}"
+            # Deliberate whitelist: only prompts that mean "a terminal pane is
+            # waiting for a human". Every other type — auth_success, the MCP
+            # elicitation_* family, and the background-agent notifications
+            # added in Claude Code 2.1.198 (agent_needs_input /
+            # agent_completed, which have no terminal pane to focus) — is
+            # dropped here so it never reaches board.jsonl.
             if [ "$notification_type" != "permission_prompt" ] && [ "$notification_type" != "idle_prompt" ]; then
                 return 0
             fi
