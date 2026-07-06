@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "ihstay",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "IHSTAY (I Have Something To Ask You) — surface every pending Claude Code session across all projects in a single floating HUD window.",
   "author": {
     "name": "sadwx",
